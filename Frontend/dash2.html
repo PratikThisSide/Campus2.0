@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Campus Maintenance System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --card-bg: rgba(255, 255, 255, 0.95);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo img {
+            height: 50px;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+        
+        .logo span {
+            color: var(--secondary);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 25px;
+        }
+        
+        .sidebar {
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            height: fit-content;
+        }
+        
+        .sidebar h2 {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary);
+            color: var(--primary);
+        }
+        
+        .nav-links li {
+            list-style: none;
+            margin-bottom: 15px;
+        }
+        
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            padding: 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .nav-links i {
+            font-size: 1.2rem;
+        }
+        
+        .content {
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .content-header h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+        
+        .welcome-banner {
+            background: linear-gradient(to right, var(--secondary), #1a6da8);
+            border-radius: 10px;
+            padding: 25px;
+            color: white;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .welcome-text h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .welcome-text p {
+            opacity: 0.9;
+            max-width: 600px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+        
+        .pending .stat-icon { background: var(--warning); }
+        .progress .stat-icon { background: var(--secondary); }
+        .completed .stat-icon { background: var(--success); }
+        .overdue .stat-icon { background: var(--danger); }
+        
+        .stat-info h3 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .stat-info p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        .charts-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-card h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .recent-requests {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .recent-requests h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .request-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .request-table th, .request-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .request-table th {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .request-table tbody tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--warning);
+        }
+        
+        .status-progress {
+            background: rgba(52, 152, 219, 0.2);
+            color: var(--secondary);
+        }
+        
+        .status-completed {
+            background: rgba(39, 174, 96, 0.2);
+            color: var(--success);
+        }
+        
+        .priority-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .priority-high {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
+        }
+        
+        .priority-medium {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--warning);
+        }
+        
+        .priority-low {
+            background: rgba(39, 174, 96, 0.2);
+            color: var(--success);
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            flex: 1;
+            min-width: 200px;
+            background: var(--card-bg);
+            border: 2px solid var(--secondary);
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            text-decoration: none;
+            color: var(--primary);
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            background: var(--secondary);
+            color: white;
+            transform: translateY(-5px);
+        }
+        
+        .action-btn i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .action-btn:hover i {
+            color: white;
+        }
+        
+        .action-btn h4 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 1100px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjMzQ5OERCQyIgZD0iTTI1NiA1MTJjLTE0MS40IDAtMjU2LTExNC42LTI1Ni0yNTZTMTE0LjYgMCAyNTYgMHMxMTQgMTE0LjYgMTE0IDI1Ni0xMDIuNiAyNTYtMTE0IDI1NnptMC00ODBjLTEyMy41IDAtMjI0IDEwMC41LTIyNCAyMjRTMTMyLjUgNDgwIDI1NiA0ODBzMjI0LTEwMC41IDIyNC0yMjRTMzc5LjUgMzIgMjU2IDMyem0xMTIgMjg4aC02NHYtOTZoNjR2OTZ6bTAtMTI4aC02NFYxMjhoNjR2NjR6Ii8+PC9zdmc+" alt="Campus Logo">
+                <h1>Campus <span>Maintenance</span> System</h1>
+            </div>
+            <div class="user-info">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiMzNDk4ZGIiLz48Y2lyY2xlIGN4PSIyMCIgY3k9IjE2IiByPSI0IiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTIwIDI0Yy0zLjMgMC02IDIuNy02IDZ2NGgxMnYtNGMwLTMuMy0yLjctNi02LTZ6IiBmaWxsPSIjZmZmIi8+PC9zdmc+" alt="User">
+                <span>Dr. Ananya Sharma (Computer Science)</span>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <aside class="sidebar">
+                <h2>Main Menu</h2>
+                <ul class="nav-links">
+                    <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="#"><i class="fas fa-plus-circle"></i> Raise Request</a></li>
+                    <li><a href="#"><i class="fas fa-history"></i> Request History</a></li>
+                    <li><a href="#"><i class="fas fa-calendar-check"></i> Schedule</a></li>
+                    <li><a href="#"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i> Help & Support</a></li>
+                    <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </aside>
+            
+            <main class="content">
+                <div class="content-header">
+                    <h2><i class="fas fa-tachometer-alt"></i> Maintenance Dashboard</h2>
+                    <div class="actions">
+                        <button class="btn"><i class="fas fa-sync-alt"></i> Refresh Data</button>
+                    </div>
+                </div>
+                
+                <div class="welcome-banner">
+                    <div class="welcome-text">
+                        <h3>Welcome back, Dr. Sharma!</h3>
+                        <p>You have 3 pending maintenance requests. The IT lab projector issue is currently being addressed by the maintenance team.</p>
+                    </div>
+                    <div class="welcome-icon">
+                        <i class="fas fa-tools fa-3x"></i>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card pending">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>12</h3>
+                            <p>Pending Requests</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card progress">
+                        <div class="stat-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>8</h3>
+                            <p>In Progress</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card completed">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>24</h3>
+                            <p>Completed</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card overdue">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>3</h3>
+                            <p>Overdue</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3><i class="fas fa-chart-line"></i> Requests Overview</h3>
+                        <div class="chart-container">
+                            <canvas id="requestsChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3><i class="fas fa-chart-pie"></i> Request Distribution</h3>
+                        <div class="chart-container">
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="recent-requests">
+                    <h3><i class="fas fa-list"></i> Recent Requests</h3>
+                    <table class="request-table">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Building</th>
+                                <th>Issue</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#CMS-245</td>
+                                <td>IT Building</td>
+                                <td>Projector not working</td>
+                                <td><span class="priority-badge priority-high">High</span></td>
+                                <td><span class="status-badge status-progress">In Progress</span></td>
+                                <td>Oct 12, 2023</td>
+                            </tr>
+                            <tr>
+                                <td>#CMS-238</td>
+                                <td>Science Complex</td>
+                                <td>AC not cooling</td>
+                                <td><span class="priority-badge priority-medium">Medium</span></td>
+                                <td><span class="status-badge status-pending">Pending</span></td>
+                                <td>Oct 10, 2023</td>
+                            </tr>
+                            <tr>
+                                <td>#CMS-231</td>
+                                <td>Library</td>
+                                <td>Leaking roof</td>
+                                <td><span class="priority-badge priority-high">High</span></td>
+                                <td><span class="status-badge status-completed">Completed</span></td>
+                                <td>Oct 8, 2023</td>
+                            </tr>
+                            <tr>
+                                <td>#CMS-229</td>
+                                <td>Admin Building</td>
+                                <td>Broken window</td>
+                                <td><span class="priority-badge priority-low">Low</span></td>
+                                <td><span class="status-badge status-progress">In Progress</span></td>
+                                <td>Oct 5, 2023</td>
+                            </tr>
+                            <tr>
+                                <td>#CMS-225</td>
+                                <td>Engineering Block</td>
+                                <td>Faulty electrical socket</td>
+                                <td><span class="priority-badge priority-medium">Medium</span></td>
+                                <td><span class="status-badge status-completed">Completed</span></td>
+                                <td>Oct 2, 2023</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="quick-actions">
+                    <a href="#" class="action-btn">
+                        <i class="fas fa-plus-circle"></i>
+                        <h4>Raise New Request</h4>
+                        <p>Report a maintenance issue</p>
+                    </a>
+                    
+                    <a href="#" class="action-btn">
+                        <i class="fas fa-history"></i>
+                        <h4>View History</h4>
+                        <p>Check previous requests</p>
+                    </a>
+                    
+                    <a href="#" class="action-btn">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h4>Schedule</h4>
+                        <p>Upcoming maintenance</p>
+                    </a>
+                </div>
+            </main>
+        </div>
+        
+        <footer>
+            <p>Campus Maintenance Scheduling System &copy; 2023 | Designed for MIT-ADT University</p>
+            <p>Final Year Project | Estimated Value: ₹5,00,000</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Requests chart
+        const requestsCtx = document.getElementById('requestsChart').getContext('2d');
+        const requestsChart = new Chart(requestsCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                datasets: [{
+                    label: 'New Requests',
+                    data: [18, 22, 15, 27, 30, 24, 32, 28, 26, 20],
+                    backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                    borderColor: 'rgba(52, 152, 219, 1)',
+                    borderWidth: 1
+                }, {
+                    label: 'Completed',
+                    data: [12, 15, 18, 20, 22, 19, 25, 27, 24, 18],
+                    backgroundColor: 'rgba(39, 174, 96, 0.7)',
+                    borderColor: 'rgba(39, 174, 96, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
+        
+        // Distribution chart
+        const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+        const distributionChart = new Chart(distributionCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Electrical', 'Plumbing', 'HVAC', 'Carpentry', 'Structural', 'Other'],
+                datasets: [{
+                    data: [25, 15, 20, 18, 12, 10],
+                    backgroundColor: [
+                        'rgba(52, 152, 219, 0.8)',
+                        'rgba(46, 204, 113, 0.8)',
+                        'rgba(155, 89, 182, 0.8)',
+                        'rgba(241, 196, 15, 0.8)',
+                        'rgba(230, 126, 34, 0.8)',
+                        'rgba(149, 165, 166, 0.8)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+        
+        // Simulate real-time updates
+        setInterval(() => {
+            const pendingStat = document.querySelector('.pending .stat-info h3');
+            const currentPending = parseInt(pendingStat.textContent);
+            pendingStat.textContent = Math.max(0, currentPending - Math.floor(Math.random() * 2));
+            
+            const progressStat = document.querySelector('.progress .stat-info h3');
+            const currentProgress = parseInt(progressStat.textContent);
+            progressStat.textContent = currentProgress + Math.floor(Math.random() * 2);
+            
+            const completedStat = document.querySelector('.completed .stat-info h3');
+            const currentCompleted = parseInt(completedStat.textContent);
+            completedStat.textContent = currentCompleted + Math.floor(Math.random() * 2);
+            
+            // Add subtle animation to updated stats
+            pendingStat.parentElement.parentElement.animate([
+                { transform: 'scale(1)' },
+                { transform: 'scale(1.05)' },
+                { transform: 'scale(1)' }
+            ], {
+                duration: 500
+            });
+        }, 10000);
+    </script>
+</body>
+</html>

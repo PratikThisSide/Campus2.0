@@ -1,0 +1,2083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Campus Maintenance System</title>
+  <!-- CSS Libraries -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <!-- JS Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/downloadjs@1.4.7"></script>
+  <style>
+    /* ================ BASE VARIABLES ================ */
+    :root {
+      /* Color Palette */
+      --primary: #4361ee;
+      --primary-light: #5a75f1;
+      --primary-dark: #3a0ca3;
+      --secondary: #3f37c9;
+      --accent: #4895ef;
+      --accent-light: #6ba7f2;
+      --danger: #f72585;
+      --danger-light: #f9519d;
+      --success: #4cc9f0;
+      --success-light: #70d4f3;
+      --warning: #f8961e;
+      --warning-light: #f9ab4b;
+      --info: #43aa8b;
+      --info-light: #69baa1;
+      
+      /* Neutral Colors */
+      --light: #f8f9fa;
+      --dark: #212529;
+      --text: #2b2d42;
+      --text-light: #6c757d;
+      --bg: #ffffff;
+      --card-bg: #f8f9fa;
+      --header-bg: #ffffff;
+      
+      /* Effects */
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --border-radius: 12px;
+      --border-radius-sm: 8px;
+    }
+
+    /* ================ DARK THEME VARIABLES ================ */
+    [data-theme="dark"] {
+      --primary: #4895ef;
+      --primary-light: #6ba7f2;
+      --primary-dark: #3a0ca3;
+      --secondary: #4361ee;
+      --accent: #3f37c9;
+      --danger: #f72585;
+      --success: #4cc9f0;
+      --warning: #f8961e;
+      --info: #43aa8b;
+      --light: #343a40;
+      --dark: #f8f9fa;
+      --text: #f8f9fa;
+      --text-light: #adb5bd;
+      --bg: #212529;
+      --card-bg: #2d3438;
+      --header-bg: #2d3438;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    /* ================ BASE STYLES ================ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      transition: var(--transition);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    @font-face {
+      font-family: 'Poppins';
+      font-style: normal;
+      font-weight: 400;
+      src: url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+    }
+
+    /* ================ LAYOUT STRUCTURE ================ */
+    .container {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ================ HEADER STYLES ================ */
+    header {
+      background-color: var(--header-bg);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      animation: fadeInDown 0.5s ease-out;
+    }
+
+    .branding {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .branding i {
+      font-size: 1.8rem;
+      animation: pulse 2s infinite;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+      position: relative;
+      padding: 0.5rem 0;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: var(--danger);
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: bold;
+      animation: bounce 2s infinite;
+    }
+
+    /* ================ DASHBOARD STYLES ================ */
+    .dashboard {
+      padding: 2rem;
+      flex: 1;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    .dashboard-header h1 {
+      font-size: 2rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .dashboard-header h1 i {
+      font-size: 2rem;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* ================ BUTTON STYLES ================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.5rem;
+      border-radius: var(--border-radius-sm);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      color: white;
+      border: none;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      font-size: 0.9rem;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .btn i {
+      transition: var(--transition);
+    }
+
+    .btn:hover i {
+      transform: translateX(3px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success), var(--info));
+    }
+
+    .btn-success:hover {
+      background: linear-gradient(135deg, var(--success-light), var(--success));
+    }
+
+    .btn-info {
+      background: linear-gradient(135deg, var(--accent), var(--secondary));
+    }
+
+    .btn-info:hover {
+      background: linear-gradient(135deg, var(--accent-light), var(--accent));
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger), #d0006f);
+    }
+
+    .btn-danger:hover {
+      background: linear-gradient(135deg, var(--danger-light), var(--danger));
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, var(--warning), #e07e00);
+    }
+
+    .btn-warning:hover {
+      background: linear-gradient(135deg, var(--warning-light), var(--warning));
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      justify-content: center;
+    }
+
+    /* ================ CARD STYLES ================ */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 1.8rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.5s ease-out;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    .card-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      color: white;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+    }
+
+    .card h2 {
+      font-size: 1.4rem;
+      margin-bottom: 0.8rem;
+      color: var(--primary);
+    }
+
+    .card p {
+      color: var(--text-light);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    /* ================ STATS SECTION ================ */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      animation: fadeIn 0.8s ease-out;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .stat-title {
+      font-size: 1rem;
+      color: var(--text-light);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-change {
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .stat-change.positive {
+      color: var(--success);
+    }
+
+    .stat-change.negative {
+      color: var(--danger);
+    }
+
+    /* ================ CHARTS SECTION ================ */
+    .charts-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-card {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      animation: fadeInUp 0.8s ease-out;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .chart-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .chart-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .chart-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 300px;
+      width: 100%;
+    }
+
+    /* ================ TASKS SECTION ================ */
+    .tasks-container {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+      animation: fadeIn 1s ease-out;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .tasks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .tasks-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .tasks-view-all {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tasks-view-all:hover {
+      color: var(--primary-dark);
+      transform: translateX(3px);
+    }
+
+    .tasks-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .task-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border-radius: var(--border-radius-sm);
+      background-color: rgba(67, 97, 238, 0.05);
+      transition: var(--transition);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .task-item:hover {
+      background-color: rgba(67, 97, 238, 0.1);
+      transform: translateX(5px);
+    }
+
+    .task-info {
+      flex: 1;
+    }
+
+    .task-title {
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+      color: var(--text);
+    }
+
+    .task-details {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .task-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .task-status {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .status-pending {
+      background-color: rgba(248, 150, 30, 0.1);
+      color: var(--warning);
+      border: 1px solid rgba(248, 150, 30, 0.2);
+    }
+
+    .status-in-progress {
+      background-color: rgba(67, 97, 238, 0.1);
+      color: var(--primary);
+      border: 1px solid rgba(67, 97, 238, 0.2);
+    }
+
+    .status-completed {
+      background-color: rgba(76, 201, 240, 0.1);
+      color: var(--success);
+      border: 1px solid rgba(76, 201, 240, 0.2);
+    }
+
+    /* ================ REQUEST IMAGE GALLERY ================ */
+    .gallery-container {
+      margin-top: 2rem;
+    }
+
+    .gallery-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .gallery-item {
+      border-radius: var(--border-radius-sm);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .gallery-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .gallery-info {
+      padding: 1rem;
+      background-color: var(--card-bg);
+    }
+
+    .gallery-info h4 {
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .gallery-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    /* ================ CREDITS SECTION ================ */
+    .credits {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      animation: fadeIn 1.2s ease-out;
+    }
+
+    .credits a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .credits a:hover {
+      text-decoration: underline;
+    }
+
+    /* ================ MIT-BOT STYLES ================ */
+    .mit-bot-container {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 100;
+    }
+
+    .mit-bot-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      box-shadow: var(--shadow-hover);
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      position: relative;
+    }
+
+    .mit-bot-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+    }
+
+    .mit-bot-btn .pulse {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: var(--primary);
+      border-radius: 50%;
+      opacity: 0;
+      animation: pulse-animation 2s infinite;
+    }
+
+    .mit-bot-chat {
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      width: 380px;
+      max-height: 500px;
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-hover);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      transition: var(--transition);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .mit-bot-chat.active {
+      display: flex;
+      animation: fadeInUp 0.3s ease-out;
+    }
+
+    .mit-bot-header {
+      padding: 1rem;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mit-bot-header h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+    }
+
+    .mit-bot-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .mit-bot-close:hover {
+      transform: rotate(90deg);
+    }
+
+    .mit-bot-messages {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .mit-bot-message {
+      max-width: 85%;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .mit-bot-message.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .mit-bot-message.bot {
+      align-self: flex-start;
+      background-color: var(--light);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .mit-bot-message.bot.suggestion {
+      background-color: rgba(67, 97, 238, 0.1);
+      border-left: 3px solid var(--primary);
+    }
+
+    .mit-bot-input-container {
+      padding: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      background-color: var(--card-bg);
+    }
+
+    .mit-bot-input {
+      flex: 1;
+      padding: 0.8rem 1rem;
+      border-radius: var(--border-radius-sm);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background-color: var(--bg);
+      color: var(--text);
+      transition: var(--transition);
+      font-size: 0.9rem;
+    }
+
+    .mit-bot-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+    }
+
+    .mit-bot-send {
+      width: 45px;
+      height: 45px;
+      border-radius: var(--border-radius-sm);
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .mit-bot-send:hover {
+      transform: scale(1.05);
+    }
+
+    .mit-bot-send:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* ================ MODAL STYLES ================ */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-hover);
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: var(--transition);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-light);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .modal-close:hover {
+      color: var(--danger);
+      transform: rotate(90deg);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-image {
+      width: 100%;
+      border-radius: var(--border-radius-sm);
+      margin-bottom: 1rem;
+    }
+
+    .modal-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-detail {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-label {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-bottom: 0.3rem;
+    }
+
+    .modal-value {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .modal-description {
+      margin-top: 1rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ================ ANIMATIONS ================ */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-5px); }
+      60% { transform: translateY(-3px); }
+    }
+
+    @keyframes pulse-animation {
+      0% {
+        transform: scale(1);
+        opacity: 0.7;
+      }
+      100% {
+        transform: scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    /* ================ RESPONSIVE STYLES ================ */
+    @media (max-width: 1200px) {
+      .charts-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      .nav-links {
+        gap: 1rem;
+      }
+      
+      .stats-container {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .mit-bot-chat {
+        width: 320px;
+        max-height: 400px;
+      }
+
+      .modal-details {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .dashboard {
+        padding: 1.5rem 1rem;
+      }
+      
+      header {
+        padding: 1rem;
+      }
+      
+      .branding {
+        font-size: 1.2rem;
+      }
+      
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .mit-bot-container {
+        bottom: 20px;
+        right: 20px;
+      }
+
+      .mit-bot-chat {
+        width: 280px;
+        right: -20px;
+      }
+
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ================ MAIN CONTAINER ================ -->
+  <div class="container">
+    <!-- ================ HEADER SECTION ================ -->
+    <header>
+      <a href="#" class="branding">
+        <i class="fas fa-tools"></i>
+        <span>Campus Maintenance System</span>
+      </a>
+      <div class="nav-links">
+        <a href="admin-profile.html">
+          <i class="fas fa-user-circle"></i>
+          <span>Admin</span>
+        </a>
+        <a href="#">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge">3</span>
+        </a>
+        <a href="login.html">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- ================ DASHBOARD CONTENT ================ -->
+    <div class="dashboard">
+      <!-- Dashboard Header -->
+      <div class="dashboard-header">
+        <h1>
+          <i class="fas fa-tachometer-alt"></i>
+          Admin Dashboard
+        </h1>
+        <div class="header-actions">
+          <button class="btn btn-primary" id="refreshDataBtn">
+            <i class="fas fa-sync-alt"></i> Refresh Data
+          </button>
+          <button class="btn btn-outline" id="darkModeToggle">
+            <i class="fas fa-moon"></i> Dark Mode
+          </button>
+        </div>
+      </div>
+
+      <!-- ================ ACTION CARDS ================ -->
+      <div class="cards">
+        <!-- Pending Requests Card -->
+        <div class="card">
+          <div class="card-icon">
+            <i class="fas fa-tasks"></i>
+          </div>
+          <h2>Pending Requests</h2>
+          <p>View and manage all pending maintenance requests. Get real-time updates on request status.</p>
+          <a href="view-request.html" class="btn btn-primary">
+            <span>View Requests</span>
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <!-- Completed Requests Card -->
+        <div class="card">
+          <div class="card-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <h2>Completed Requests</h2>
+          <p>Check the history of completed requests with details, resolution time, and staff feedback.</p>
+          <a href="completedRequest.html" class="btn btn-success">
+            <span>View History</span>
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <!-- Reports Card -->
+        <div class="card">
+          <div class="card-icon">
+            <i class="fas fa-chart-bar"></i>
+          </div>
+          <h2>Reports & Analytics</h2>
+          <p>Generate detailed reports and view analytics for maintenance requests and staff performance.</p>
+          <a href="reports.html" class="btn btn-info">
+            <span>View Reports</span>
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- ================ STATS OVERVIEW ================ -->
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-title">
+            <i class="fas fa-clock"></i> Pending Requests
+          </div>
+          <div class="stat-value" id="pendingCount">15</div>
+          <div class="stat-change positive">
+            <i class="fas fa-arrow-up"></i> 5% from last week
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">
+            <i class="fas fa-check-circle"></i> Completed This Week
+          </div>
+          <div class="stat-value" id="completedCount">8</div>
+          <div class="stat-change positive">
+            <i class="fas fa-arrow-up"></i> 12% from last week
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">
+            <i class="fas fa-users"></i> Active Staff
+          </div>
+          <div class="stat-value" id="staffCount">6</div>
+          <div class="stat-change">
+            <i class="fas fa-equals"></i> No change
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">
+            <i class="fas fa-stopwatch"></i> Avg. Resolution Time
+          </div>
+          <div class="stat-value" id="resolutionTime">1.8 <span style="font-size: 1rem;">days</span></div>
+          <div class="stat-change negative">
+            <i class="fas fa-arrow-down"></i> 8% from last week
+          </div>
+        </div>
+      </div>
+
+      <!-- ================ DATA VISUALIZATION ================ -->
+      <div class="charts-container">
+        <!-- Requests by Category Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title">
+              <i class="fas fa-chart-line"></i> Requests by Category
+            </div>
+            <div class="chart-actions">
+              <button class="btn btn-sm btn-outline" id="downloadCategoryChart">
+                <i class="fas fa-download"></i> Export
+              </button>
+              <button class="btn btn-sm btn-primary" id="refreshCategoryChart">
+                <i class="fas fa-sync-alt"></i> Refresh
+              </button>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Status Distribution Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title">
+              <i class="fas fa-chart-pie"></i> Status Distribution
+            </div>
+            <div class="chart-actions">
+              <button class="btn btn-sm btn-outline" id="downloadStatusChart">
+                <i class="fas fa-download"></i> Export
+              </button>
+              <button class="btn btn-sm btn-primary" id="refreshStatusChart">
+                <i class="fas fa-sync-alt"></i> Refresh
+              </button>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="statusChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================ RECENT TASKS ================ -->
+      <div class="tasks-container">
+        <div class="tasks-header">
+          <div class="tasks-title">
+            <i class="fas fa-tasks"></i> Recent Maintenance Tasks
+          </div>
+          <a href="view-request.html" class="tasks-view-all">
+            View All <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+        <div class="tasks-list" id="tasksList">
+          <!-- Task items will be inserted here -->
+        </div>
+      </div>
+
+      <!-- ================ REQUEST IMAGE GALLERY ================ -->
+      <div class="gallery-container">
+        <h2 class="gallery-title">
+          <i class="fas fa-images"></i> Recent Request Images
+        </h2>
+        <div class="gallery-grid" id="requestGallery">
+          <!-- Gallery items will be inserted here -->
+        </div>
+      </div>
+
+      <!-- ================ CREDITS SECTION ================ -->
+      <div class="credits">
+        <p>Campus Maintenance System | SY1903 Group</p>
+        <p>Guide: Prof. Dr. Nagesh Jadhav</p>
+        <p>Team: Pratik Raj, Vedant Navghare, Kumaril Pandey, Prathmesh Bhilawekar</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ MIT-BOT CHAT INTERFACE ================ -->
+  <div class="mit-bot-container">
+    <button class="mit-bot-btn" id="mitBotBtn">
+      <div class="pulse"></div>
+      <i class="fas fa-robot"></i>
+    </button>
+    <div class="mit-bot-chat" id="mitBotChat">
+      <div class="mit-bot-header">
+        <h3><i class="fas fa-robot"></i> MIT-Bot Assistant</h3>
+        <button class="mit-bot-close" id="mitBotClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="mit-bot-messages" id="mitBotMessages">
+        <div class="mit-bot-message bot">
+          Hello! I'm MIT-Bot, your campus maintenance assistant. How can I help you today?
+        </div>
+        <div class="mit-bot-message bot suggestion">
+          Try asking me about:
+          <br><br>
+          • "Show pending requests"<br>
+          • "What's the average resolution time?"<br>
+          • "Generate a maintenance report"<br>
+          • "View recent issues in Building A"
+        </div>
+      </div>
+      <div class="mit-bot-input-container">
+        <input type="text" class="mit-bot-input" id="mitBotInput" placeholder="Ask about campus maintenance...">
+        <button class="mit-bot-send" id="mitBotSend">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ REQUEST DETAIL MODAL ================ -->
+  <div class="modal-overlay" id="requestModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fas fa-tools"></i> Request Details
+        </h3>
+        <button class="modal-close" id="modalClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Modal content will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ JAVASCRIPT ================ -->
+  <script>
+    // ================ GLOBAL VARIABLES ================
+    let maintenanceRequests = [];
+    let categoryChart, statusChart, resolutionTrendChart;
+
+    // ================ DARK MODE TOGGLE ================
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    
+    // Check for saved theme preference or use preferred color scheme
+    const savedTheme = localStorage.getItem('theme') || 
+                     (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    
+    // Apply saved theme on page load
+    if (savedTheme === 'dark') {
+      document.body.setAttribute('data-theme', 'dark');
+      darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+    }
+
+    // Toggle dark/light mode
+    darkModeToggle.addEventListener('click', () => {
+      const isDark = document.body.hasAttribute('data-theme');
+      
+      if (isDark) {
+        document.body.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+        darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+      } else {
+        document.body.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+      }
+      
+      // Update charts for theme change
+      updateChartsTheme();
+    });
+
+    // ================ DATA LOADING ================
+    async function loadMaintenanceData() {
+      try {
+        // Simulate API call with timeout
+        showLoadingIndicator();
+        
+        // In a real app, this would be an actual API call:
+        // const response = await fetch('/api/maintenance-requests');
+        // maintenanceRequests = await response.json();
+        
+        // Mock data - this would come from your raiseRequest.html submissions
+        maintenanceRequests = [
+          {
+            id: 'REQ-1001',
+            title: 'Projector not working',
+            description: 'The projector in S218 is not turning on. Tried different power outlets but still not working.',
+            location: 'Building S, Room 218',
+            category: 'Tech',
+            priority: 'High',
+            status: 'pending',
+            requestedBy: 'Prof. Sharma',
+            date: '2023-05-15T09:30:00',
+            image: 'https://images.unsplash.com/photo-1581093450021-4a7360e9aab5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'
+          },
+          {
+            id: 'REQ-1002',
+            title: 'Light bulb replacement',
+            description: 'Several light bulbs in N603 need replacement. The room is too dark for classes.',
+            location: 'Building N, Room 603',
+            category: 'Electrical',
+            priority: 'Medium',
+            status: 'in-progress',
+            requestedBy: 'Dr. Patel',
+            date: '2023-05-14T14:15:00',
+            image: 'https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'
+          },
+          {
+            id: 'REQ-1003',
+            title: 'PC servicing needed',
+            description: 'PC02 in N518 is running very slow and needs maintenance.',
+            location: 'Building N, Room 518 (PC02)',
+            category: 'Tech',
+            priority: 'Medium',
+            status: 'pending',
+            requestedBy: 'Ms. Desai',
+            date: '2023-05-13T11:20:00',
+            image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'
+          },
+          {
+            id: 'REQ-1004',
+            title: 'Leaking pipe',
+            description: 'There is a leaking pipe in the ground floor washroom near the cafeteria.',
+            location: 'Ground floor washroom',
+            category: 'Plumbing',
+            priority: 'High',
+            status: 'completed',
+            requestedBy: 'Mr. Joshi',
+            date: '2023-05-12T16:45:00',
+            image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'
+          },
+          {
+            id: 'REQ-1005',
+            title: 'AC not cooling',
+            description: 'The air conditioning in the cafeteria is not cooling properly.',
+            location: 'Cafeteria',
+            category: 'HVAC',
+            priority: 'High',
+            status: 'in-progress',
+            requestedBy: 'Canteen Staff',
+            date: '2023-05-11T10:00:00',
+            image: 'https://images.unsplash.com/photo-1600566752229-250ed79470a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'
+          },
+          {
+            id: 'REQ-1006',
+            title: 'Broken window',
+            description: 'Window in C307 is broken and needs replacement.',
+            location: 'Building C, Room 307',
+            category: 'Structural',
+            priority: 'Medium',
+            status: 'pending',
+            requestedBy: 'Prof. Gupta',
+            date: '2023-05-10T13:30:00',
+            image: 'https://images.unsplash.com/photo-1622372738946-62e02505feb3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'
+          }
+        ];
+
+        // Update all UI components with the new data
+        updateStats();
+        updateTaskList();
+        updateRequestGallery();
+        initCharts();
+        
+        hideLoadingIndicator();
+        
+      } catch (error) {
+        console.error('Error loading maintenance data:', error);
+        hideLoadingIndicator();
+        showError('Failed to load maintenance data. Please try again.');
+      }
+    }
+
+    function showLoadingIndicator() {
+      // In a real app, you would show a loading spinner
+      console.log('Loading data...');
+    }
+
+    function hideLoadingIndicator() {
+      // Hide loading spinner
+      console.log('Data loaded');
+    }
+
+    function showError(message) {
+      // In a real app, you would show a proper error message
+      console.error(message);
+    }
+
+    // ================ STATS UPDATES ================
+    function updateStats() {
+      const pendingCount = document.getElementById('pendingCount');
+      const completedCount = document.getElementById('completedCount');
+      const staffCount = document.getElementById('staffCount');
+      const resolutionTime = document.getElementById('resolutionTime');
+      
+      // Calculate stats from the maintenanceRequests data
+      const pending = maintenanceRequests.filter(req => req.status === 'pending').length;
+      const completed = maintenanceRequests.filter(req => req.status === 'completed').length;
+      
+      // Update the UI
+      pendingCount.textContent = pending;
+      completedCount.textContent = completed;
+      staffCount.textContent = '6'; // This would come from your staff data
+      resolutionTime.textContent = '1.8'; // This would be calculated from resolution times
+    }
+
+    // ================ TASK LIST UPDATES ================
+    function updateTaskList() {
+      const tasksList = document.getElementById('tasksList');
+      
+      // Sort by date (newest first)
+      const sortedRequests = [...maintenanceRequests].sort((a, b) => 
+        new Date(b.date) - new Date(a.date)
+      );
+      
+      // Display the 5 most recent tasks
+      const recentTasks = sortedRequests.slice(0, 5);
+      
+      tasksList.innerHTML = recentTasks.map(task => `
+        <div class="task-item" data-id="${task.id}">
+          <div class="task-info">
+            <div class="task-title">${task.title}</div>
+            <div class="task-details">
+              <span class="task-detail">
+                <i class="fas fa-map-marker-alt"></i> ${task.location}
+              </span>
+              <span class="task-detail">
+                <i class="fas fa-user-tag"></i> ${task.requestedBy}
+              </span>
+              <span class="task-detail">
+                <i class="fas fa-tag"></i> ${task.category}
+              </span>
+            </div>
+          </div>
+          <div class="task-status status-${task.status.replace('-', '')}">
+            ${task.status.replace('-', ' ')}
+          </div>
+        </div>
+      `).join('');
+      
+      // Add click event to task items
+      document.querySelectorAll('.task-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const requestId = item.getAttribute('data-id');
+          showRequestDetails(requestId);
+        });
+      });
+    }
+
+    // ================ REQUEST GALLERY ================
+    function updateRequestGallery() {
+      const gallery = document.getElementById('requestGallery');
+      
+      // Sort by date (newest first) and get requests with images
+      const requestsWithImages = maintenanceRequests
+        .filter(req => req.image)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      // Display gallery items
+      gallery.innerHTML = requestsWithImages.slice(0, 4).map(req => `
+        <div class="gallery-item" data-id="${req.id}">
+          <img src="${req.image}" alt="${req.title}" class="gallery-image">
+          <div class="gallery-info">
+            <h4>${req.title}</h4>
+            <div class="gallery-meta">
+              <span><i class="fas fa-map-marker-alt"></i> ${req.location.split(',')[0]}</span>
+              <span>${new Date(req.date).toLocaleDateString()}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      
+      // Add click event to gallery items
+      document.querySelectorAll('.gallery-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const requestId = item.getAttribute('data-id');
+          showRequestDetails(requestId);
+        });
+      });
+    }
+
+    // ================ REQUEST DETAIL MODAL ================
+    function showRequestDetails(requestId) {
+      const modal = document.getElementById('requestModal');
+      const modalBody = document.getElementById('modalBody');
+      
+      // Find the request
+      const request = maintenanceRequests.find(req => req.id === requestId);
+      if (!request) return;
+      
+      // Format the date
+      const requestDate = new Date(request.date);
+      const formattedDate = requestDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      // Update modal content
+      modalBody.innerHTML = `
+        <img src="${request.image}" alt="${request.title}" class="modal-image">
+        <div class="modal-details">
+          <div class="modal-detail">
+            <span class="modal-label">Request ID</span>
+            <span class="modal-value">${request.id}</span>
+          </div>
+          <div class="modal-detail">
+            <span class="modal-label">Category</span>
+            <span class="modal-value">${request.category}</span>
+          </div>
+          <div class="modal-detail">
+            <span class="modal-label">Priority</span>
+            <span class="modal-value">${request.priority}</span>
+          </div>
+          <div class="modal-detail">
+            <span class="modal-label">Status</span>
+            <span class="modal-value">${request.status.replace('-', ' ')}</span>
+          </div>
+          <div class="modal-detail">
+            <span class="modal-label">Requested By</span>
+            <span class="modal-value">${request.requestedBy}</span>
+          </div>
+          <div class="modal-detail">
+            <span class="modal-label">Date Submitted</span>
+            <span class="modal-value">${formattedDate}</span>
+          </div>
+          <div class="modal-detail">
+            <span class="modal-label">Location</span>
+            <span class="modal-value">${request.location}</span>
+          </div>
+        </div>
+        <div class="modal-description">
+          <h4>Description</h4>
+          <p>${request.description}</p>
+        </div>
+      `;
+      
+      // Show the modal
+      modal.classList.add('active');
+      
+      // Close modal when clicking the close button
+      document.getElementById('modalClose').addEventListener('click', () => {
+        modal.classList.remove('active');
+      });
+      
+      // Close modal when clicking outside
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      });
+    }
+
+    // ================ CHARTS INITIALIZATION ================
+    function initCharts() {
+      // Calculate chart data from maintenanceRequests
+      const categories = ['Electrical', 'Tech', 'Plumbing', 'HVAC', 'Structural'];
+      const statuses = ['pending', 'in-progress', 'completed'];
+      
+      // Category data
+      const categoryData = categories.map(category => 
+        maintenanceRequests.filter(req => req.category === category).length
+      );
+      
+      // Status data
+      const statusData = statuses.map(status => 
+        maintenanceRequests.filter(req => req.status === status).length
+      );
+      
+      // Category Chart (Bar Chart)
+      const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+      if (categoryChart) categoryChart.destroy();
+      
+      categoryChart = new Chart(categoryCtx, {
+        type: 'bar',
+        data: {
+          labels: categories,
+          datasets: [{
+            label: 'Requests by Category',
+            data: categoryData,
+            backgroundColor: [
+              'rgba(255, 206, 86, 0.7)',
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(75, 192, 192, 0.7)',
+              'rgba(153, 102, 255, 0.7)',
+              'rgba(255, 159, 64, 0.7)'
+            ],
+            borderColor: [
+              'rgba(255, 206, 86, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  if (Number.isInteger(value)) {
+                    return value;
+                  }
+                }
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.05)'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleFont: {
+                size: 14
+              },
+              bodyFont: {
+                size: 12
+              }
+            }
+          }
+        }
+      });
+
+      // Status Chart (Doughnut Chart)
+      const statusCtx = document.getElementById('statusChart').getContext('2d');
+      if (statusChart) statusChart.destroy();
+      
+      statusChart = new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Pending', 'In Progress', 'Completed'],
+          datasets: [{
+            data: statusData,
+            backgroundColor: [
+              'rgba(248, 150, 30, 0.7)',
+              'rgba(67, 97, 238, 0.7)',
+              'rgba(76, 201, 240, 0.7)'
+            ],
+            borderColor: [
+              'rgba(248, 150, 30, 1)',
+              'rgba(67, 97, 238, 1)',
+              'rgba(76, 201, 240, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                usePointStyle: true,
+                padding: 20,
+                font: {
+                  size: 12
+                }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleFont: {
+                size: 14
+              },
+              bodyFont: {
+                size: 12
+              }
+            }
+          },
+          cutout: '70%'
+        }
+      });
+    }
+
+    function updateChartsTheme() {
+      // Update chart colors based on theme
+      if (categoryChart) {
+        categoryChart.options.scales.y.grid.color = getComputedStyle(document.body).getPropertyValue('--text-light');
+        categoryChart.update();
+      }
+      
+      if (statusChart) {
+        statusChart.update();
+      }
+    }
+
+    // ================ CHART EXPORT FUNCTIONALITY ================
+    function exportChart(chart, fileName) {
+      // Create a temporary canvas
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = chart.canvas.width;
+      tempCanvas.height = chart.canvas.height;
+      
+      // Draw the chart on the temporary canvas
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.fillStyle = getComputedStyle(document.body).getPropertyValue('--card-bg');
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      tempCtx.drawImage(chart.canvas, 0, 0);
+      
+      // Convert to image and download
+      const image = tempCanvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = image;
+      link.download = fileName + '.png';
+      link.click();
+    }
+
+    // ================ PDF REPORT GENERATION ================
+    async function generatePDFReport() {
+      try {
+        // Create a new PDF document
+        const { PDFDocument, rgb } = PDFLib;
+        const pdfDoc = await PDFDocument.create();
+        
+        // Add a blank page
+        const page = pdfDoc.addPage([550, 750]);
+        
+        // Draw title
+        page.drawText('Campus Maintenance System - Monthly Report', {
+          x: 50,
+          y: 700,
+          size: 20,
+          color: rgb(0.2, 0.2, 0.6),
+        });
+        
+        // Draw date
+        const today = new Date();
+        page.drawText(`Generated on: ${today.toLocaleDateString()}`, {
+          x: 50,
+          y: 670,
+          size: 12,
+          color: rgb(0.4, 0.4, 0.4),
+        });
+        
+        // Draw summary section
+        page.drawText('Summary Statistics', {
+          x: 50,
+          y: 630,
+          size: 16,
+          color: rgb(0.2, 0.2, 0.6),
+        });
+        
+        const pending = maintenanceRequests.filter(req => req.status === 'pending').length;
+        const completed = maintenanceRequests.filter(req => req.status === 'completed').length;
+        
+        page.drawText(`• Pending Requests: ${pending}`, {
+          x: 60,
+          y: 600,
+          size: 12,
+          color: rgb(0, 0, 0),
+        });
+        
+        page.drawText(`• Completed This Month: ${completed}`, {
+          x: 60,
+          y: 580,
+          size: 12,
+          color: rgb(0, 0, 0),
+        });
+        
+        page.drawText(`• Active Staff: 6`, {
+          x: 60,
+          y: 560,
+          size: 12,
+          color: rgb(0, 0, 0),
+        });
+        
+        page.drawText(`• Avg. Resolution Time: 1.8 days`, {
+          x: 60,
+          y: 540,
+          size: 12,
+          color: rgb(0, 0, 0),
+        });
+        
+        // Draw chart data
+        page.drawText('Requests by Category', {
+          x: 50,
+          y: 500,
+          size: 16,
+          color: rgb(0.2, 0.2, 0.6),
+        });
+        
+        const categories = ['Electrical', 'Tech', 'Plumbing', 'HVAC', 'Structural'];
+        const categoryData = categories.map(category => 
+          maintenanceRequests.filter(req => req.category === category).length
+        );
+        
+        categories.forEach((category, index) => {
+          page.drawText(`• ${category}: ${categoryData[index]} requests`, {
+            x: 60,
+            y: 470 - (index * 20),
+            size: 12,
+            color: rgb(0, 0, 0),
+          });
+        });
+        
+        // Draw recent requests
+        page.drawText('Recent Maintenance Requests', {
+          x: 50,
+          y: 380,
+          size: 16,
+          color: rgb(0.2, 0.2, 0.6),
+        });
+        
+        const recentRequests = [...maintenanceRequests]
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .slice(0, 5);
+        
+        recentRequests.forEach((request, index) => {
+          const yPos = 350 - (index * 40);
+          page.drawText(`• ${request.title} (${request.status.replace('-', ' ')})`, {
+            x: 60,
+            y: yPos,
+            size: 12,
+            color: rgb(0, 0, 0),
+          });
+          page.drawText(`  Location: ${request.location}`, {
+            x: 60,
+            y: yPos - 15,
+            size: 10,
+            color: rgb(0.4, 0.4, 0.4),
+          });
+        });
+        
+        // Save the PDF
+        const pdfBytes = await pdfDoc.save();
+        
+        // Download the PDF
+        download(pdfBytes, "Maintenance_Report_" + today.toISOString().split('T')[0] + ".pdf", "application/pdf");
+        
+      } catch (error) {
+        console.error('Error generating PDF:', error);
+        alert('Failed to generate PDF report. Please try again.');
+      }
+    }
+
+    // ================ MIT-BOT FUNCTIONALITY ================
+    function initMitBot() {
+      const mitBotBtn = document.getElementById('mitBotBtn');
+      const mitBotChat = document.getElementById('mitBotChat');
+      const mitBotClose = document.getElementById('mitBotClose');
+      const mitBotMessages = document.getElementById('mitBotMessages');
+      const mitBotInput = document.getElementById('mitBotInput');
+      const mitBotSend = document.getElementById('mitBotSend');
+
+      // Toggle chat visibility
+      mitBotBtn.addEventListener('click', () => {
+        mitBotChat.classList.toggle('active');
+      });
+
+      mitBotClose.addEventListener('click', () => {
+        mitBotChat.classList.remove('active');
+      });
+
+      // Send message function
+      function sendMessage() {
+        const message = mitBotInput.value.trim();
+        if (message) {
+          // Add user message
+          addMessage(message, 'user');
+          mitBotInput.value = '';
+          mitBotSend.disabled = true;
+          
+          // Simulate bot typing
+          setTimeout(() => {
+            const botResponse = generateBotResponse(message);
+            addMessage(botResponse, 'bot');
+            mitBotSend.disabled = false;
+          }, 800);
+        }
+      }
+
+      // Add message to chat
+      function addMessage(text, sender) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('mit-bot-message', sender);
+        messageElement.textContent = text;
+        mitBotMessages.appendChild(messageElement);
+        mitBotMessages.scrollTop = mitBotMessages.scrollHeight;
+      }
+
+      // Generate bot response
+      function generateBotResponse(message) {
+        const lowerMessage = message.toLowerCase();
+        
+        // Count requests by different criteria
+        const pendingCount = maintenanceRequests.filter(req => req.status === 'pending').length;
+        const completedCount = maintenanceRequests.filter(req => req.status === 'completed').length;
+        const inProgressCount = maintenanceRequests.filter(req => req.status === 'in-progress').length;
+        
+        // Count by category
+        const electricalCount = maintenanceRequests.filter(req => req.category === 'Electrical').length;
+        const techCount = maintenanceRequests.filter(req => req.category === 'Tech').length;
+        const plumbingCount = maintenanceRequests.filter(req => req.category === 'Plumbing').length;
+        const hvacCount = maintenanceRequests.filter(req => req.category === 'HVAC').length;
+        const structuralCount = maintenanceRequests.filter(req => req.category === 'Structural').length;
+        
+        // Count by building
+        const buildingSCount = maintenanceRequests.filter(req => req.location.includes('Building S')).length;
+        const buildingNCount = maintenanceRequests.filter(req => req.location.includes('Building N')).length;
+        const buildingCCount = maintenanceRequests.filter(req => req.location.includes('Building C')).length;
+        
+        if (lowerMessage.includes('pending') || lowerMessage.includes('requests')) {
+          return `There are currently ${pendingCount} pending maintenance requests. ${inProgressCount} requests are in progress. You can view them in the 'Pending Requests' section.`;
+        } 
+        else if (lowerMessage.includes('completed') || lowerMessage.includes('resolved')) {
+          return `${completedCount} requests were completed this month. The average resolution time is 1.8 days. Check the 'Completed Requests' section for details.`;
+        } 
+        else if (lowerMessage.includes('report') || lowerMessage.includes('analytics')) {
+          return "You can download monthly reports from the dashboard. Click the 'Download Monthly Report' button above the charts to generate a PDF report.";
+        } 
+        else if (lowerMessage.includes('time') || lowerMessage.includes('resolution')) {
+          return "The average resolution time is currently 1.8 days. Electrical issues are resolved fastest (1.2 days), while structural repairs take longest (2.5 days).";
+        } 
+        else if (lowerMessage.includes('building')) {
+          if (lowerMessage.includes('s')) {
+            return `Building S has ${buildingSCount} active maintenance requests. The most common issues are ${buildingSCount > 0 ? 'tech equipment problems' : 'none currently'}.`;
+          }
+          else if (lowerMessage.includes('n')) {
+            return `Building N has ${buildingNCount} active maintenance requests, mostly ${buildingNCount > 0 ? 'electrical and plumbing issues' : 'none currently'}.`;
+          }
+          else if (lowerMessage.includes('c')) {
+            return `Building C has ${buildingCCount} active maintenance requests, including ${buildingCCount > 0 ? 'structural repairs' : 'none currently'}.`;
+          }
+          else {
+            return `Maintenance requests by building:\n- Building S: ${buildingSCount}\n- Building N: ${buildingNCount}\n- Building C: ${buildingCCount}`;
+          }
+        }
+        else if (lowerMessage.includes('category') || lowerMessage.includes('type')) {
+          return `Maintenance requests by category:\n- Electrical: ${electricalCount}\n- Tech: ${techCount}\n- Plumbing: ${plumbingCount}\n- HVAC: ${hvacCount}\n- Structural: ${structuralCount}`;
+        }
+        else if (lowerMessage.includes('help') || lowerMessage.includes('support')) {
+          return "I can help with:\n- Maintenance request status\n- Report generation\n- System analytics\n- Building-specific issues\n- Category breakdowns\nTry asking about any of these topics!";
+        } 
+        else {
+          return "I'm not sure I understand. I can help with maintenance requests, reports, and system analytics. Try asking about:\n\n• 'Show pending requests'\n• 'Requests in Building N'\n• 'Generate a report'\n• 'Requests by category'";
+        }
+      }
+
+      // Event listeners for sending messages
+      mitBotSend.addEventListener('click', sendMessage);
+      mitBotInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          sendMessage();
+        }
+      });
+      
+      // Enable/disable send button based on input
+      mitBotInput.addEventListener('input', () => {
+        mitBotSend.disabled = mitBotInput.value.trim() === '';
+      });
+    }
+
+    // ================ PAGE INITIALIZATION ================
+    document.addEventListener('DOMContentLoaded', () => {
+      // Load initial data
+      loadMaintenanceData();
+      
+      // Initialize MIT-Bot
+      initMitBot();
+      
+      // Set up refresh buttons
+      document.getElementById('refreshDataBtn').addEventListener('click', loadMaintenanceData);
+      document.getElementById('refreshCategoryChart').addEventListener('click', initCharts);
+      document.getElementById('refreshStatusChart').addEventListener('click', initCharts);
+      
+      // Set up download buttons
+      document.getElementById('downloadReportBtn').addEventListener('click', generatePDFReport);
+      document.getElementById('downloadCategoryChart').addEventListener('click', () => {
+        exportChart(categoryChart, 'Requests_by_Category');
+      });
+      document.getElementById('downloadStatusChart').addEventListener('click', () => {
+        exportChart(statusChart, 'Status_Distribution');
+      });
+      
+      // Add staggered animations
+      const cards = document.querySelectorAll('.card');
+      cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+      });
+    });
+  </script>
+</body>
+</html>

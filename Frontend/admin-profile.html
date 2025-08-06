@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profile | Campus Maintenance System</title>
+    <!-- CSS Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        /* ================ BASE VARIABLES ================ */
+        :root {
+            /* Color Palette */
+            --primary: #4361ee;
+            --primary-light: #5a75f1;
+            --primary-dark: #3a0ca3;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --danger: #f72585;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --info: #43aa8b;
+            
+            /* Neutral Colors */
+            --light: #f8f9fa;
+            --dark: #212529;
+            --text: #2b2d42;
+            --text-light: #6c757d;
+            --bg: #ffffff;
+            --card-bg: #f8f9fa;
+            
+            /* Effects */
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --border-radius: 12px;
+            --border-radius-sm: 8px;
+        }
+
+        /* ================ DARK THEME VARIABLES ================ */
+        [data-theme="dark"] {
+            --primary: #4895ef;
+            --primary-light: #6ba7f2;
+            --primary-dark: #3a0ca3;
+            --secondary: #4361ee;
+            --accent: #3f37c9;
+            --danger: #f72585;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --info: #43aa8b;
+            --light: #343a40;
+            --dark: #f8f9fa;
+            --text: #f8f9fa;
+            --text-light: #adb5bd;
+            --bg: #212529;
+            --card-bg: #2d3438;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ================ BASE STYLES ================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            transition: var(--transition);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 400;
+            src: url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        }
+
+        /* ================ LAYOUT STRUCTURE ================ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* ================ HEADER STYLES ================ */
+        header {
+            position: relative;
+            margin-bottom: 6rem;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            animation: fadeInDown 0.5s ease-out;
+        }
+
+        .cover-photo {
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .cover-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.8);
+            transition: var(--transition);
+        }
+
+        .cover-photo:hover img {
+            transform: scale(1.05);
+            filter: brightness(0.7);
+        }
+
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid var(--card-bg);
+            position: absolute;
+            bottom: -75px;
+            left: 50%;
+            transform: translateX(-50%);
+            overflow: hidden;
+            box-shadow: var(--shadow-hover);
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .profile-photo:hover {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-header-content {
+            text-align: center;
+            padding: 5rem 1rem 2rem;
+            background-color: var(--card-bg);
+            margin-top: -4rem;
+            position: relative;
+            z-index: 5;
+        }
+
+        .profile-header-content h1 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        .profile-header-content .sub-heading {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.8s ease-out 0.3s both;
+        }
+
+        .profile-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            animation: fadeIn 0.8s ease-out 0.4s both;
+        }
+
+        /* ================ MAIN CONTENT ================ */
+        main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease-out 0.5s both;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ================ PROFILE SECTIONS ================ */
+        .profile-section {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .profile-section:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .profile-section h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(67, 97, 238, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .profile-section ul {
+            list-style: none;
+        }
+
+        .profile-section li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .profile-section li:last-child {
+            margin-bottom: 0;
+        }
+
+        .profile-section strong {
+            color: var(--text);
+            min-width: 120px;
+            display: inline-block;
+        }
+
+        .profile-section .info-value {
+            color: var(--text-light);
+            flex: 1;
+        }
+
+        /* ================ STATS SECTION ================ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: rgba(67, 97, 238, 0.1);
+            border-radius: var(--border-radius-sm);
+            padding: 1rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* ================ BUTTON STYLES ================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--border-radius-sm);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn i {
+            transition: var(--transition);
+        }
+
+        .btn:hover i {
+            transform: translateX(3px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ================ EDIT PROFILE MODAL ================ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-hover);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background-color: var(--bg);
+            color: var(--text);
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* ================ FOOTER STYLES ================ */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ================ DARK MODE TOGGLE ================ */
+        .dark-toggle {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-hover);
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            z-index: 100;
+        }
+
+        .dark-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* ================ ANIMATIONS ================ */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- ================ DARK MODE TOGGLE ================ -->
+    <button class="dark-toggle" id="darkModeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- ================ MAIN CONTAINER ================ -->
+    <div class="container">
+        <!-- ================ PROFILE HEADER ================ -->
+        <header>
+            <div class="cover-photo">
+                <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="IT Building Cover Photo">
+            </div>
+         <!--   <div class="profile-photo">
+                <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Admin Profile Photo">
+                <div class="online-status"></div> -->
+            </div>
+            <div class="profile-header-content">
+                <h1>Alexandra Chen</h1>
+                <p class="sub-heading">Senior Admin | IT Tower Maintenance</p>
+                <div class="profile-actions">
+                    <button class="btn btn-primary" id="editProfileBtn">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </button>
+                    <button class="btn btn-outline">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- ================ MAIN CONTENT ================ -->
+        <main>
+            <!-- Personal Information Section -->
+            <section class="profile-section">
+                <h2><i class="fas fa-user"></i> Personal Information</h2>
+                <ul>
+                    <li>
+                        <strong>Department:</strong>
+                        <span class="info-value">SY19</span>
+                    </li>
+                    <li>
+                        <strong>Position:</strong>
+                        <span class="info-value">Senior System Administrator</span>
+                    </li>
+                    <li>
+                        <strong>Employment No:</strong>
+                        <span class="info-value">010101011000</span>
+                    </li>
+                    <li>
+                        <strong>Join Date:</strong>
+                        <span class="info-value">March 15, 2020</span>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Contact Information Section -->
+            <section class="profile-section">
+                <h2><i class="fas fa-address-card"></i> Contact Details</h2>
+                <ul>
+                    <li>
+                        <strong>Email:</strong>
+                        <span class="info-value">techadmin@ittower.com</span>
+                    </li>
+                    <li>
+                        <strong>Phone:</strong>
+                        <span class="info-value">+91 9876543210</span>
+                    </li>
+                    <li>
+                        <strong>Office:</strong>
+                        <span class="info-value">IT Tower, Room 405</span>
+                    </li>
+                    <li>
+                        <strong>Working Hours:</strong>
+                        <span class="info-value">Mon-Fri, 9:00 AM - 6:00 PM</span>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Admin Stats Section -->
+            <section class="profile-section">
+                <h2><i class="fas fa-chart-line"></i> Admin Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">142</div>
+                        <div class="stat-label">Requests Handled</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">92%</div>
+                        <div class="stat-label">Satisfaction</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">1.8</div>
+                        <div class="stat-label">Avg. Resolution (days)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">15</div>
+                        <div class="stat-label">Active Tasks</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Activity Section -->
+            <section class="profile-section">
+                <h2><i class="fas fa-clock-rotate-left"></i> Recent Activity</h2>
+                <ul>
+                    <li>
+                        <strong>Today:</strong>
+                        <span class="info-value">Resolved 3 maintenance requests</span>
+                    </li>
+                    <li>
+                        <strong>Yesterday:</strong>
+                        <span class="info-value">Assigned 5 new tasks to staff</span>
+                    </li>
+                    <li>
+                        <strong>This Week:</strong>
+                        <span class="info-value">Completed 12 requests (85% on time)</span>
+                    </li>
+                    <li>
+                        <strong>Last Login:</strong>
+                        <span class="info-value">Today at 8:45 AM</span>
+                    </li>
+                </ul>
+            </section>
+        </main>
+
+        <!-- ================ FOOTER ================ -->
+        <footer>
+            <p>&copy; 2025 <a href="#">Campus Maintenance System</a> | SY1903 Group. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- ================ EDIT PROFILE MODAL ================ -->
+    <div class="modal-overlay" id="editProfileModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-user-edit"></i> Edit Profile
+                </h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" class="form-control" value="Alexandra Chen">
+                </div>
+                <div class="form-group">
+                    <label for="position">Position</label>
+                    <input type="text" id="position" class="form-control" value="Senior System Administrator">
+                </div>
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <input type="text" id="department" class="form-control" value="SY19">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-control" value="techadmin@ittower.com">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" class="form-control" value="+91 9876543210">
+                </div>
+                <div class="form-group">
+                    <label for="office">Office Location</label>
+                    <input type="text" id="office" class="form-control" value="IT Tower, Room 405">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelEdit">
+                    Cancel
+                </button>
+                <button class="btn btn-primary" id="saveProfile">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================ JAVASCRIPT ================ -->
+    <script>
+        // ================ DARK MODE TOGGLE ================
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        
+        // Check for saved theme preference or use preferred color scheme
+        const savedTheme = localStorage.getItem('theme') || 
+                         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Apply saved theme on page load
+        if (savedTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        // Toggle dark/light mode
+        darkModeToggle.addEventListener('click', () => {
+            const isDark = document.body.hasAttribute('data-theme');
+            
+            if (isDark) {
+                document.body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+        });
+
+        // ================ EDIT PROFILE MODAL ================
+        const editProfileBtn = document.getElementById('editProfileBtn');
+        const editProfileModal = document.getElementById('editProfileModal');
+        const modalClose = document.getElementById('modalClose');
+        const cancelEdit = document.getElementById('cancelEdit');
+
+        // Show modal
+        editProfileBtn.addEventListener('click', () => {
+            editProfileModal.classList.add('active');
+        });
+
+        // Close modal
+        function closeModal() {
+            editProfileModal.classList.remove('active');
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        cancelEdit.addEventListener('click', closeModal);
+
+        // Close when clicking outside modal
+        editProfileModal.addEventListener('click', (e) => {
+            if (e.target === editProfileModal) {
+                closeModal();
+            }
+        });
+
+        // Save profile changes
+        document.getElementById('saveProfile').addEventListener('click', () => {
+            // In a real app, you would save these changes to a database
+            alert('Profile changes saved successfully!');
+            closeModal();
+        });
+
+        // ================ ANIMATE STATS ================
+        function animateStats() {
+            const statValues = document.querySelectorAll('.stat-value');
+            
+            statValues.forEach((stat, index) => {
+                // Add animation delay
+                stat.style.animation = `float 3s ease-in-out ${index * 0.2}s infinite`;
+            });
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            animateStats();
+            
+            // Add pulse animation to profile photo
+            const profilePhoto = document.querySelector('.profile-photo');
+            setInterval(() => {
+                profilePhoto.style.animation = 'pulse 2s ease-in-out';
+                setTimeout(() => {
+                    profilePhoto.style.animation = '';
+                }, 2000);
+            }, 8000);
+        });
+    </script>
+</body>
+</html>

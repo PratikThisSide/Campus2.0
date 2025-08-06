@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Maintenance Portal | Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #4361ee;
+            --primary-blue-dark: #3a0ca3;
+            --primary-red: #ef233c;
+            --primary-red-dark: #d00000;
+            --light: #f8f9fa;
+            --light-gray: rgba(255,255,255,0.8);
+            --medium-gray: #adb5bd;
+            --dark-gray: #495057;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+            --shadow-xl: 0 20px 50px rgba(0,0,0,0.2);
+            
+            --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-medium: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+            
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-full: 9999px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('ADTdome.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: brightness(0.4);
+            z-index: -2;
+            animation: zoomInOut 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes zoomInOut {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        .mit-logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            animation: fadeInDown 0.8s ease-out;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .mit-logo img {
+            height: 60px;
+            transition: var(--transition-medium);
+        }
+
+        .mit-logo:hover img {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .login-container {
+            background: var(--glass-bg);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            width: 380px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            transform-style: preserve-3d;
+            transition: var(--transition-medium);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            z-index: -1;
+            border-radius: var(--radius-xl);
+        }
+
+        .login-container:hover {
+            transform: translateY(-5px) rotateX(5deg) rotateY(5deg);
+            box-shadow: 0 30px 50px rgba(0,0,0,0.3);
+        }
+
+        .color-strip {
+            height: 6px;
+            width: 100%;
+            background: var(--primary-blue);
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: var(--transition-medium);
+            box-shadow: 0 2px 10px rgba(67, 97, 238, 0.5);
+        }
+
+        .admin-theme .color-strip {
+            background: var(--primary-red);
+            box-shadow: 0 2px 10px rgba(239, 35, 60, 0.5);
+        }
+
+        .login-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-type-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .teacher-btn {
+            border: 1px solid rgba(67, 97, 238, 0.3);
+        }
+
+        .admin-btn {
+            border: 1px solid rgba(239, 35, 60, 0.3);
+        }
+
+        .login-type-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+            z-index: -1;
+            opacity: 0;
+            transition: var(--transition-medium);
+            border-radius: var(--radius-full);
+        }
+
+        .admin-btn::before {
+            background: linear-gradient(135deg, var(--primary-red), var(--primary-red-dark));
+        }
+
+        .login-type-btn.active {
+            color: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .login-type-btn.active::before {
+            opacity: 0.8;
+        }
+
+        .login-type-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .login-type-btn:active {
+            transform: translateY(0);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 0.5rem;
+            transition: var(--transition-medium);
+            display: inline-block;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .logo h1 {
+            margin: 0;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin: 0 0 1.5rem 0;
+            color: white;
+            font-weight: 400;
+            font-size: 1.1rem;
+            position: relative;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 2px;
+            background: white;
+            border-radius: var(--radius-full);
+            transition: var(--transition-medium);
+            opacity: 0.5;
+        }
+
+        .input-box {
+            margin-bottom: 1.25rem;
+            position: relative;
+        }
+
+        .input-box label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: white;
+            font-size: 0.9rem;
+            transition: var(--transition-medium);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i.fa-user,
+        .input-with-icon i.fa-lock {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.7);
+            font-size: 1rem;
+            transition: var(--transition-medium);
+        }
+
+        .input-with-icon input {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 2.5rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            transition: var(--transition-medium);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            backdrop-filter: blur(5px);
+        }
+
+        .input-with-icon input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .input-with-icon input:focus {
+            outline: none;
+            border-color: white;
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 0 0 3px rgba(255,255,255,0.1);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: rgba(255,255,255,0.7);
+            font-size: 1rem;
+            transition: var(--transition-fast);
+        }
+
+        .toggle-password:hover {
+            color: white;
+        }
+
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            color: white;
+            cursor: pointer;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .remember-me input {
+            margin-right: 0.5rem;
+            accent-color: var(--primary-blue);
+            cursor: pointer;
+        }
+
+        .admin-theme .remember-me input {
+            accent-color: var(--primary-red);
+        }
+
+        .forgot-password {
+            color: white;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition-fast);
+            position: relative;
+            opacity: 0.8;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .forgot-password:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
+        }
+
+        .admin-theme .login-btn {
+            background: linear-gradient(135deg, var(--primary-red), var(--primary-red-dark));
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-blue-dark), var(--primary-blue));
+            opacity: 0;
+            z-index: -1;
+            transition: var(--transition-medium);
+        }
+
+        .admin-theme .login-btn::before {
+            background: linear-gradient(135deg, var(--primary-red-dark), var(--primary-red));
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .login-btn:hover::before {
+            opacity: 1;
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn i {
+            margin-left: 0.5rem;
+            font-size: 0.9rem;
+            transition: var(--transition-medium);
+        }
+
+        .login-btn:hover i {
+            transform: translateX(5px);
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            text-align: center;
+            margin-top: 0.5rem;
+            display: none;
+            font-size: 0.85rem;
+            animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .login-form {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .login-form.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Floating particles decoration */
+        .particle {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            animation: floatParticle 15s infinite linear;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .login-container {
+                width: 90%;
+                padding: 1.5rem;
+            }
+            
+            .mit-logo img {
+                height: 50px;
+            }
+            
+            .login-buttons {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .login-type-btn {
+                width: 100%;
+            }
+        }
+
+        /* Loading animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        /* Glow animation */
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(255,255,255,0.3); }
+            50% { box-shadow: 0 0 20px rgba(255,255,255,0.6); }
+            100% { box-shadow: 0 0 5px rgba(255,255,255,0.3); }
+        }
+
+        .glow {
+            animation: glow 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="mit-logo">
+        <img src="MITADT.png" alt="MIT Logo">
+    </div>
+
+    <div class="login-container" id="loginContainer">
+        <div class="color-strip glow"></div>
+        
+        <div class="login-buttons">
+            <button class="login-type-btn teacher-btn active" id="teacherBtn">Teacher</button>
+            <button class="login-type-btn admin-btn" id="adminBtn">Admin</button>
+        </div>
+        
+        <div class="logo">
+            <i class="fas fa-tools"></i>
+            <h1>Campus Maintenance</h1>
+        </div>
+
+        <!-- Teacher Login Form -->
+        <form id="teacherLoginForm" class="login-form active">
+            <h2>Login</h2>
+
+            <div class="input-box">
+                <label for="teacherEmail"></label>
+                <div class="input-with-icon">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="teacherEmail" placeholder="Username" required>
+                </div>
+            </div>
+
+            <div class="input-box">
+                <label for="teacherPhone"></label>
+                <div class="input-with-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="teacherPhone" placeholder="Password" required>
+                    <i class="fas fa-eye toggle-password" onclick="togglePassword('teacherPhone')"></i>
+                </div>
+            </div>
+
+            <div class="options">
+                <label class="remember-me">
+                    <input type="checkbox"> Remember me
+                </label>
+                <a href="#" class="forgot-password">Forgot password?</a>
+            </div>
+
+            <div id="teacher-error-message" class="error-message"></div>
+
+            <button type="submit" class="login-btn">Login <i class="fas fa-arrow-right"></i></button>
+        </form>
+
+        <!-- Admin Login Form -->
+        <form id="adminLoginForm" class="login-form">
+            <h2>Login</h2>
+
+            <div class="input-box">
+                <label for="adminEmail"></label>
+                <div class="input-with-icon">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="adminEmail" placeholder="Username" required>
+                </div>
+            </div>
+
+            <div class="input-box">
+                <label for="adminPhone"></label>
+                <div class="input-with-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="adminPhone" placeholder="Password" required>
+                    <i class="fas fa-eye toggle-password" onclick="togglePassword('adminPhone')"></i>
+                </div>
+            </div>
+
+            <div class="options">
+                <label class="remember-me">
+                    <input type="checkbox"> Remember me
+                </label>
+                <a href="#" class="forgot-password">Forgot password?</a>
+            </div>
+
+            <div id="admin-error-message" class="error-message"></div>
+
+            <button type="submit" class="login-btn">Login <i class="fas fa-arrow-right"></i></button>
+        </form>
+    </div>
+
+   <script>
+    // Theme switching (unchanged)
+    document.getElementById('teacherBtn').addEventListener('click', () => {
+        document.getElementById('loginContainer').classList.remove('admin-theme');
+        document.getElementById('teacherBtn').classList.add('active');
+        document.getElementById('adminBtn').classList.remove('active');
+        document.getElementById('teacherLoginForm').classList.add('active');
+        document.getElementById('adminLoginForm').classList.remove('active');
+    });
+    
+    document.getElementById('adminBtn').addEventListener('click', () => {
+        document.getElementById('loginContainer').classList.add('admin-theme');
+        document.getElementById('adminBtn').classList.add('active');
+        document.getElementById('teacherBtn').classList.remove('active');
+        document.getElementById('adminLoginForm').classList.add('active');
+        document.getElementById('teacherLoginForm').classList.remove('active');
+    });
+
+    // Password visibility toggle (unchanged)
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const icon = document.querySelector(`[onclick="togglePassword('${inputId}')"]`);
+        input.type = input.type === 'password' ? 'text' : 'password';
+        icon.classList.toggle('fa-eye-slash');
+    }
+
+    // Handle login form submission (UPDATED)
+    document.getElementById('teacherLoginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await handleLogin('teacher');
+    });
+
+    document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await handleLogin('admin');
+    });
+
+    // Main login function (UPDATED)
+    async function handleLogin(userType) {
+        const form = document.getElementById(`${userType}LoginForm`);
+        const email = form.querySelector('input[type="text"]').value;
+        const password = form.querySelector('input[type="password"]').value;
+        const errorElement = form.querySelector('.error-message');
+        const submitBtn = form.querySelector('.login-btn');
+        const buttonText = submitBtn.innerHTML;
+
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="loading"></span> Authenticating...';
+
+        try {
+            const response = await fetch('http://localhost:3000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    email, 
+                    password,
+                    role: userType 
+                })
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.error || 'Login failed');
+            }
+
+            // Store token and user data
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            
+            // Show success state
+            submitBtn.innerHTML = '<span>✓</span> Login Successful!';
+            submitBtn.style.background = 'linear-gradient(135deg, #4cc9f0, #38b000)';
+            
+            // Redirect based on role
+            setTimeout(() => {
+                if (data.user.role === 'admin') {
+                    window.location.href = 'admin-home.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
+            }, 1000);
+            
+        } catch (error) {
+            showError(errorElement, error.message);
+            submitBtn.innerHTML = '<span>✕</span> Login Failed';
+            submitBtn.style.background = 'linear-gradient(135deg, #ef233c, #d00000)';
+            
+            setTimeout(() => {
+                resetButton(submitBtn, buttonText);
+            }, 2000);
+        }
+    }
+
+    // Helper functions (unchanged)
+    function showError(element, message) {
+        element.textContent = message;
+        element.style.display = 'block';
+        setTimeout(() => {
+            element.style.display = 'none';
+        }, 5000);
+    }
+
+    function resetButton(button, originalHTML) {
+        button.disabled = false;
+        button.innerHTML = originalHTML;
+        if (document.getElementById('loginContainer').classList.contains('admin-theme')) {
+            button.style.background = 'linear-gradient(135deg, var(--primary-red), var(--primary-red-dark))';
+        } else {
+            button.style.background = 'linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark))';
+        }
+    }
+
+    // [Keep your existing particle effects code]
+</script> 
+</body>
+</html>

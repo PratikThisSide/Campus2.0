@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Maintenance Request</title>
+    <style>
+       
+    /* ================ ROOT VARIABLES ================ */
+    :root {
+        /* Color Palette */
+        --primary: #4361ee;
+        --primary-light: #4895ef;
+        --primary-dark: #3a0ca3;
+        --secondary: #7209b7;
+        --accent: #f72585;
+        --light: #f8f9fa;
+        --light-gray: #e9ecef;
+        --medium-gray: #adb5bd;
+        --dark-gray: #495057;
+        --dark: #212529;
+        --success: #4cc9f0;
+        --warning: #f8961e;
+        --error: #ef233c;
+        --info: #560bad;
+        
+        /* Shadows */
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+        --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+        --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+        --shadow-xl: 0 20px 50px rgba(0,0,0,0.15);
+        --shadow-inset: inset 0 2px 4px rgba(0,0,0,0.05);
+        
+        /* Gradients */
+        --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        --gradient-accent: linear-gradient(135deg, var(--accent), var(--secondary));
+        --gradient-success: linear-gradient(135deg, var(--success), #38b000);
+        --gradient-error: linear-gradient(135deg, var(--error), #d00000);
+        --gradient-warning: linear-gradient(135deg, var(--warning), #f3722c);
+        
+        /* Transitions */
+        --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-medium: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-bounce: all 0.5s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+        
+        /* Border Radius */
+        --radius-sm: 4px;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+        --radius-xl: 16px;
+        --radius-full: 9999px;
+        
+        /* Spacing */
+        --space-xs: 4px;
+        --space-sm: 8px;
+        --space-md: 16px;
+        --space-lg: 24px;
+        --space-xl: 32px;
+        --space-2xl: 48px;
+        --space-3xl: 64px;
+    }
+
+    /* ================ BASE STYLES ================ */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        line-height: 1.6;
+        color: var(--dark);
+        background-color: var(--light);
+        background-image: radial-gradient(circle at 1px 1px, var(--medium-gray) 1px, transparent 0);
+        background-size: 20px 20px;
+        padding: var(--space-2xl);
+        max-width: 700px;
+        margin: 0 auto;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* ================ TYPOGRAPHY ================ */
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: var(--dark);
+        text-align: center;
+        margin-bottom: var(--space-xl);
+        position: relative;
+        padding-bottom: var(--space-md);
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    h1::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        border-radius: var(--radius-full);
+        box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+    }
+
+    label {
+        display: block;
+        margin-bottom: var(--space-sm);
+        font-weight: 600;
+        color: var(--dark-gray);
+        transition: var(--transition-medium);
+        font-size: 0.95rem;
+        letter-spacing: 0.3px;
+    }
+
+    .required::after {
+        content: " *";
+        color: var(--error);
+        font-weight: 700;
+    }
+
+    /* ================ FORM CONTAINER ================ */
+    #maintenanceForm {
+        background-color: white;
+        border-radius: var(--radius-xl);
+        padding: var(--space-2xl);
+        box-shadow: var(--shadow-xl);
+        border: 1px solid rgba(255,255,255,0.2);
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    #maintenanceForm::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        z-index: 2;
+    }
+
+    #maintenanceForm::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 80% 20%, rgba(244, 63, 94, 0.03) 0%, rgba(67, 97, 238, 0.03) 100%);
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    /* ================ FORM GROUPS ================ */
+    .form-group {
+        margin-bottom: var(--space-lg);
+        position: relative;
+        transition: var(--transition-medium);
+    }
+
+    .form-group:focus-within {
+        transform: translateY(-2px);
+    }
+
+    .form-group:focus-within label {
+        color: var(--primary);
+        transform: translateX(2px);
+    }
+
+    /* ================ INPUT FIELDS ================ */
+    input[type="text"],
+    textarea,
+    select {
+        width: 100%;
+        padding: var(--space-md);
+        border: 2px solid var(--light-gray);
+        border-radius: var(--radius-md);
+        font-size: 1rem;
+        transition: var(--transition-medium);
+        background-color: white;
+        box-shadow: var(--shadow-sm);
+        color: var(--dark);
+        font-family: inherit;
+        appearance: none;
+    }
+
+    input[type="text"]::placeholder,
+    textarea::placeholder {
+        color: var(--medium-gray);
+        opacity: 1;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        transform: translateY(-1px);
+    }
+
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    /* ================ SELECT DROPDOWN ================ */
+    select {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23495057' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right var(--space-md) center;
+        background-size: 18px;
+        padding-right: var(--space-2xl);
+        cursor: pointer;
+    }
+
+    select:hover {
+        border-color: var(--medium-gray);
+    }
+
+    /* ================ FILE UPLOAD ================ */
+    input[type="file"] {
+        display: none;
+    }
+
+    .file-upload-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-xl);
+        background-color: white;
+        border: 2px dashed var(--light-gray);
+        border-radius: var(--radius-md);
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition-medium);
+        position: relative;
+        overflow: hidden;
+        min-height: 120px;
+    }
+
+    .file-upload-label:hover {
+        border-color: var(--primary);
+        background-color: rgba(67, 97, 238, 0.03);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .file-upload-label:active {
+        transform: translateY(0);
+    }
+
+    .file-upload-label::before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        width: 40px;
+        height: 40px;
+        background-color: var(--primary);
+        transform: rotate(45deg);
+        opacity: 0;
+        transition: var(--transition-medium);
+    }
+
+    .file-upload-label:hover::before {
+        opacity: 0.1;
+    }
+
+    #file-upload-text {
+        font-weight: 500;
+        color: var(--dark-gray);
+        margin-bottom: var(--space-xs);
+        transition: var(--transition-medium);
+        position: relative;
+        z-index: 1;
+    }
+
+    .file-upload-label:hover #file-upload-text {
+        color: var(--primary);
+    }
+
+    #file-name {
+        font-size: 0.85rem;
+        color: var(--medium-gray);
+        font-style: italic;
+        margin-top: var(--space-sm);
+        transition: var(--transition-medium);
+        position: relative;
+        z-index: 1;
+    }
+
+    .file-upload-label:hover #file-name {
+        color: var(--primary);
+    }
+
+    .file-upload-icon {
+        font-size: 1.5rem;
+        color: var(--medium-gray);
+        margin-bottom: var(--space-sm);
+        transition: var(--transition-medium);
+    }
+
+    .file-upload-label:hover .file-upload-icon {
+        color: var(--primary);
+        transform: scale(1.1);
+    }
+
+    /* ================ BUTTON ================ */
+    button {
+        background: var(--gradient-primary);
+        color: white;
+        padding: var(--space-md) var(--space-xl);
+        border: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        width: 100%;
+        transition: var(--transition-bounce);
+        box-shadow: var(--shadow-md);
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: var(--space-md);
+    }
+
+    button:hover {
+        transform: translateY(-3px) scale(1.01);
+        box-shadow: var(--shadow-lg);
+    }
+
+    button:active {
+        transform: translateY(1px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--gradient-accent);
+        opacity: 0;
+        z-index: -1;
+        transition: var(--transition-medium);
+    }
+
+    button:hover::before {
+        opacity: 1;
+    }
+
+    /* ================ LOADING STATE ================ */
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+        margin-right: 10px;
+        vertical-align: middle;
+    }
+
+    .pulse {
+        animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    /* ================ SUCCESS/ERROR STATES ================ */
+    .success-state {
+        background: var(--gradient-success) !important;
+    }
+
+    .error-state {
+        background: var(--gradient-error) !important;
+    }
+
+    /* ================ DECORATIVE ELEMENTS ================ */
+    .form-decoration {
+        position: absolute;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    .decoration-1 {
+        width: 150px;
+        height: 150px;
+        background: radial-gradient(circle, rgba(67, 97, 238, 0.1) 0%, rgba(67, 97, 238, 0) 70%);
+        top: -50px;
+        right: -50px;
+    }
+
+    .decoration-2 {
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba(244, 63, 94, 0.1) 0%, rgba(244, 63, 94, 0) 70%);
+        bottom: -30px;
+        left: -30px;
+    }
+
+    /* ================ PRIORITY INDICATORS ================ */
+    .priority-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+
+    .priority-low .priority-indicator {
+        background-color: var(--success);
+        box-shadow: 0 0 8px var(--success);
+    }
+
+    .priority-medium .priority-indicator {
+        background-color: var(--warning);
+        box-shadow: 0 0 8px var(--warning);
+    }
+
+    .priority-high .priority-indicator {
+        background-color: var(--error);
+        box-shadow: 0 0 8px var(--error);
+    }
+
+    /* ================ FLOATING LABEL EFFECT ================ */
+    .float-container {
+        position: relative;
+        margin-top: 20px;
+    }
+
+    .float-container input,
+    .float-container textarea,
+    .float-container select {
+        padding-top: 24px;
+    }
+
+    .float-container label {
+        position: absolute;
+        top: 20px;
+        left: 16px;
+        font-size: 0.9rem;
+        color: var(--medium-gray);
+        transition: var(--transition-medium);
+        pointer-events: none;
+        background-color: white;
+        padding: 0 8px;
+        z-index: 1;
+    }
+
+    .float-container input:focus + label,
+    .float-container input:not(:placeholder-shown) + label,
+    .float-container textarea:focus + label,
+    .float-container textarea:not(:placeholder-shown) + label,
+    .float-container select:focus + label,
+    .float-container select:valid + label {
+        top: 0;
+        left: 12px;
+        font-size: 0.75rem;
+        color: var(--primary);
+        transform: translateY(8px);
+    }
+
+    /* ================ TOOLTIPS ================ */
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        margin-left: 8px;
+        cursor: help;
+    }
+
+    .tooltip::after {
+        content: '?';
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 16px;
+        height: 16px;
+        background-color: var(--medium-gray);
+        color: white;
+        border-radius: 50%;
+        font-size: 0.7rem;
+        font-weight: bold;
+        vertical-align: middle;
+    }
+
+    .tooltip:hover::before {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--dark);
+        color: white;
+        padding: 6px 10px;
+        border-radius: var(--radius-sm);
+        font-size: 0.8rem;
+        font-weight: normal;
+        white-space: nowrap;
+        z-index: 10;
+        margin-bottom: 8px;
+        opacity: 0;
+        transition: var(--transition-fast);
+    }
+
+    .tooltip:hover::after {
+        background-color: var(--primary);
+    }
+
+    .tooltip:hover::before {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-5px);
+    }
+
+    /* ================ RESPONSIVE ADJUSTMENTS ================ */
+    @media (max-width: 768px) {
+        body {
+            padding: var(--space-lg);
+        }
+        
+        h1 {
+            font-size: 2rem;
+        }
+        
+        #maintenanceForm {
+            padding: var(--space-xl);
+        }
+    }
+
+    @media (max-width: 480px) {
+        h1 {
+            font-size: 1.8rem;
+        }
+        
+        #maintenanceForm {
+            padding: var(--space-lg);
+        }
+        
+        button {
+            padding: var(--space-md);
+        }
+    }
+
+    /* ================ ANIMATIONS ================ */
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    @keyframes shimmer {
+        0% { background-position: -1000px 0; }
+        100% { background-position: 1000px 0; }
+    }
+
+    /* ================ SPECIAL EFFECTS ================ */
+    .glow-effect {
+        position: relative;
+    }
+
+    .glow-effect::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100%;
+        border-radius: inherit;
+        box-shadow: 0 0 15px rgba(67, 97, 238, 0.5);
+        opacity: 0;
+        transition: var(--transition-medium);
+    }
+
+    .glow-effect:hover::after {
+        opacity: 1;
+    }
+
+    /* ================ MICROINTERACTIONS ================ */
+    .shake {
+        animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    /* ================ 3D TRANSFORMS ================ */
+    .form-group-3d {
+        perspective: 1000px;
+    }
+
+    .form-group-3d input,
+    .form-group-3d textarea,
+    .form-group-3d select {
+        transform-style: preserve-3d;
+        transition: var(--transition-medium);
+    }
+
+    .form-group-3d input:focus,
+    .form-group-3d textarea:focus,
+    .form-group-3d select:focus {
+        transform: translateZ(10px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    /* ================ NEUMORPHISM ================ */
+    .neumorphic {
+        background: var(--light);
+        border-radius: var(--radius-md);
+        box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff;
+        transition: var(--transition-medium);
+    }
+
+    .neumorphic:hover {
+        box-shadow: 2px 2px 5px #d1d9e6, -2px -2px 5px #ffffff;
+    }
+
+    /* ================ GLASSMORPHISM ================ */
+    .glass {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ================ CUSTOM CHECKBOX/RADIO ================ */
+    .custom-checkbox {
+        position: relative;
+        padding-left: 30px;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .custom-checkbox input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 20px;
+        width: 20px;
+        background-color: white;
+        border: 2px solid var(--medium-gray);
+        border-radius: var(--radius-sm);
+        transition: var(--transition-medium);
+    }
+
+    .custom-checkbox:hover .checkmark {
+        border-color: var(--primary);
+    }
+
+    .custom-checkbox input:checked ~ .checkmark {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .checkmark::after {
+        content: "";
+        position: absolute;
+        display: none;
+        left: 6px;
+        top: 2px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+
+    .custom-checkbox input:checked ~ .checkmark::after {
+        display: block;
+    }
+
+    /* ================ CUSTOM SCROLLBAR ================ */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--light-gray);
+        border-radius: var(--radius-full);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: var(--radius-full);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-dark);
+    }
+    </style>
+</head>
+<body>
+    <div class="form-decoration decoration-1"></div>
+    <div class="form-decoration decoration-2"></div>
+    
+    <h1>Create Maintenance Request</h1>
+    
+    <form id="maintenanceForm" enctype="multipart/form-data">
+        <div class="form-group form-group-3d">
+            <label for="buildingName" class="required">Building Name</label>
+            <select id="buildingName" name="buildingName" required>
+                <option value="" disabled selected>Select a building</option>
+                <option value="IT Tower">IT Tower(SOC)</option>
+                <option value="Design Building">Design Building</option>
+                <option value="MANET">MANET</option>
+                <option value="Boys Hostel">Boys Hostel</option>
+                <option value="Girls Hostel">Girls Hostel</option>
+                <option value="ISBJ">ISBJ</option>
+                <option value="R.K. Auditorium">R.K. Auditorium</option>
+                <option value="SRM">SRM</option>
+                <option value="Sangeet Kala">Sangeet Kala</option>
+                <option value="Sports Complex">Sports Complex</option>
+                <option value="Temple">Temple</option>
+                <option value="Tuck Shop">Tuck Shop</option>
+                <option value="U.K. Auditorium">U.K. Auditorium</option>
+                <option value="Workshop">Workshop</option>
+                <option value="World Peace Dome">World Peace Dome</option>
+                <option value="Others">Others</option>
+            </select>
+        </div>
+        
+        <div class="form-group form-group-3d">
+            <label for="roomNumber" class="required">Room Number</label>
+            <input type="text" id="roomNumber" name="roomNumber" required placeholder="Enter room number">
+        </div>
+        
+        <div class="form-group form-group-3d">
+            <label for="priority" class="required">Priority Level</label>
+            <select id="priority" name="priority" required>
+                <option value="" disabled selected>Select priority</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+        </div>
+        
+        <div class="form-group form-group-3d">
+            <label for="issueDescription" class="required">Issue Description</label>
+            <textarea id="issueDescription" name="issueDescription" required placeholder="Describe the issue in detail"></textarea>
+        </div>
+        
+        <div class="form-group form-group-3d">
+            <label for="photo">Upload Image (Optional, max 1MB)</label>
+            <label for="photo" class="file-upload-label neumorphic">
+                <div class="file-upload-icon">📁</div>
+                <span id="file-upload-text">Click to upload or drag and drop</span>
+                <div id="file-name" class="file-name"></div>
+            </label>
+            <input type="file" id="photo" name="photo" accept="image/*">
+        </div>
+        
+        <button type="submit" id="submitBtn" class="glow-effect">
+            <span id="button-text">Submit Request</span>
+        </button>
+    </form>
+
+    <script>
+        // [Previous JavaScript remains exactly the same]
+    </script>
+</body>
+</html>
